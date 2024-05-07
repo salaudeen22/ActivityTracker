@@ -1,4 +1,4 @@
-const tabTimeObjectKey = "tabTimesObject"; // { key:url, value: {url:string, trackedSeconds: number, lastDateVal: number //utc milliseconds?}}
+const tabTimeObjectKey = "tabTimesObject"; // { key:url, value: {url:string, trackedSeconds: number, lastDateVal: number //utc milliseconds?,startDateVal:number}}
 const lastActiveTabKey = "lastActiveTab"; // {url:string, lastDateVal: number}
 
 chrome.runtime.onInstalled.addListener(function() {
@@ -44,9 +44,11 @@ function processTabChange(isWindowActive) {
             let hostName = url;
             try {
                 let urlObject = new URL(url);
+
                 hostName = urlObject.hostname;
             } catch (e) {
-                console.error(`Could not construct URL from ${currentTab.url}, error: ${e}`);
+                console.log(e);
+                // console.error(`Could not construct URL from ${currentTab.url}, error: ${e}`);
             }
             console.log("isWindowActive: " + isWindowActive);
             console.log(tabs);
@@ -55,6 +57,7 @@ function processTabChange(isWindowActive) {
             chrome.storage.local.get([tabTimeObjectKey, lastActiveTabKey], function(result) {
                 let lastActiveTab = JSON.parse(result[lastActiveTabKey] || '{}');
                 let tabTimeObject = JSON.parse(result[tabTimeObjectKey] || '{}');
+                console.log("result:"+JSON.stringify(result));
 
                 if (lastActiveTab.hasOwnProperty("url") && lastActiveTab.hasOwnProperty("lastDateVal")) {
                     let lastUrl = lastActiveTab["url"];
@@ -72,7 +75,8 @@ function processTabChange(isWindowActive) {
                         let newUrlInfo = {
                             url: lastUrl,
                             trackedSeconds: passedSeconds,
-                            lastDateVal: currentDateVal
+                            lastDateVal: currentDateVal,
+                            startDateVal: lastActiveTab["lastDateVal"]
                         };
                         tabTimeObject[lastUrl] = newUrlInfo;
                     }
@@ -81,10 +85,10 @@ function processTabChange(isWindowActive) {
                
                 let currentDateValue = Date.now();
                 let lastTabInfo = {
-                    "url": hostName,
+                    "url": hostName ? hostName : "Unknown Tab",
                     "lastDateVal": currentDateValue
                 };
-              
+                
                 if (!isWindowActive) {
                     lastTabInfo = {};
                 }

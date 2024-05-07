@@ -44,18 +44,32 @@ showTableBtn.onclick = function(element) {
             });
            
             entries.forEach(function(urlObject) {
+                console.log(urlObject);
                 let newRow = timeTable.insertRow(0); 
                 let celHostname = newRow.insertCell(0);
                 let celTimeMinutes = newRow.insertCell(1);
                 let celTime = newRow.insertCell(2);
                 let celLastDate = newRow.insertCell(3);
+                let celFirstDate = newRow.insertCell(4);
                 celHostname.innerHTML = urlObject["url"];
                 let time_ = urlObject["trackedSeconds"] != null ? urlObject["trackedSeconds"] : 0;
                 celTime.innerHTML = Math.round(time_);
                 celTimeMinutes.innerHTML = (time_ / 60).toFixed(2);
                 let date = new Date();
-                date.setTime(urlObject["lastDateVal"] != null ? urlObject["lastDateVal"] : 0);
-                celLastDate.innerHTML = date.toUTCString();
+                if (urlObject.hasOwnProperty(["lastDateVal"])) {
+                    date.setTime(urlObject["lastDateVal"]);
+                    celLastDate.innerHTML = date.toUTCString();
+                  } else {
+                    celLastDate.innerHTML = "date not found ";
+                  }
+                  if (urlObject.hasOwnProperty("startDateVal")) {
+                    console.log("frist name:"+ date.toUTCString());
+                    date.setTime(urlObject["startDateVal"]);
+                    celFirstDate.innerHTML = date.toUTCString();
+                  } else {
+                    celFirstDate.innerHTML = "date not found ";
+                  }
+          
             });
             
             let headerRow = timeTable.insertRow(0);
@@ -63,6 +77,7 @@ showTableBtn.onclick = function(element) {
             headerRow.insertCell(1).innerHTML = "Minutes";
             headerRow.insertCell(2).innerHTML = "Tracked Seconds";
             headerRow.insertCell(3).innerHTML = "Last Date";
+            headerRow.insertCell(4).innerHTML = "Frist Date";
         } catch (err) {
             const message = "Loading the tabTimesObject went wrong: " + err.toString();
             console.error(message);
