@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <style>
-        button {
-            height: 40px;
-            width: 100px;
-            outline: none;
-        }
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+    <link rel="stylesheet" href="popup.css">
 
-        #timeTable {
-            width: 560px;
-            border: 1px solid black;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
-<body>
-<div id="timeTableDiv">
-    <table id="timeTable">
-      
-    </table>
-</div>
-<div id="errorMessage"></div>
-<button id="btnShowTable">Load times</button>
-<button id="btnClearTimes">Clear times</button>
-<button id="btnExportPDf">Export Pdf</button>
-Display All Urls:<input type="checkbox" id="allUrlCheckBox"/>
 
-<script src="popup.js"></script>
+<body>
+    <nav>
+        <div id="logo"><img src="Assesst/logo.png" alt="" srcset="" width="30vw" height="30vh"></div>
+
+        <h1>Activity Tracker</h1>
+
+        <div id="btn">
+            <a href=""><i class="fa-solid fa-chart-line" style="font-size: 16px;"></i></a>
+            <a href=""><i class="fa-solid fa-gear" style="font-size: 16px; margin-left: 10px;"></i></a>
+        </div>
+
+    </nav>
+    <div id="main">
+
+
+
+        <div id="timeTableDiv">
+            <table id="timeTable">
+
+            </table>
+        </div>
+    </div>
+
+
+
+    <div id="errorMessage"></div>
+    <div class="btnsection">
+        <button id="btnShowTable">Load times</button>
+        <button id="btnClearTimes">Clear times</button>
+        <button id="btnExportPDf">Export Pdf</button>
+        Display All Urls:<input type="checkbox" id="allUrlCheckBox" />
+
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="popup.js"></script>
 </body>
+
 </html>

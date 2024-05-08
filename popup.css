@@ -1,0 +1,53 @@
+nav
+{
+    display: flex;
+    flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
+}
+nav a
+{
+    color: inherit;
+    text-decoration: none;
+}
+
+#btn
+{
+    display: flex;
+    align-items: center;
+}
+
+
+button {
+    height: 40px;
+    width: 100px;
+    outline: none;
+}
+
+#timeTable {
+    width: 560px;
+    border: 1px solid black;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+/* .btnsection
+{
+    display: flex;
+    align-items: center;
+    
+    border: 1px solid black;
+    padding: 4px;
+
+
+}
+.btnsection button
+{
+    border: 1px solid black;
+    outline: none;
+    width: 100%;
+    height: 25vh;
+  
+
+} */

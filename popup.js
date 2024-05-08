@@ -1,3 +1,7 @@
+
+
+
+
 let showTableBtn = document.getElementById("btnShowTable");
 let clearTimesBtn = document.getElementById("btnClearTimes");
 let errorMessageElement = document.getElementById("errorMessage");
