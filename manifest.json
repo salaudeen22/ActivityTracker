@@ -1,15 +1,19 @@
 {
-    "name": "Activity Tracker",
-    "version": "1.0",
-    "description": "Track your browsing activity with this extension.",
-    "permissions": ["activeTab","tabs", "declarativeContent", "storage"],
-    "action": {
-        "default_popup": "popup.html"
-    },
-    "options_page": "options.html",
-    "background": {
-        "service_worker": "background.js"
-    },
-   
-    "manifest_version": 3
+  "name": "Activity Tracker",
+  "version": "1.0",
+  "description": "Track your browsing activity with this extension.",
+  "permissions": ["activeTab", "tabs", "declarativeContent", "storage"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "manifest_version": 3,
+  "web_accessible_resources": [
+    {
+      "resources": ["login.html", "login.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

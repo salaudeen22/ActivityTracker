@@ -150,3 +150,6 @@ function onTabTrack(activeInfo) {
 
 // Add listener for tab activation event
 chrome.tabs.onActivated.addListener(onTabTrack);
+
+
+

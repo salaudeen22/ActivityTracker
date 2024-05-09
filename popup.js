@@ -1,13 +1,60 @@
-
-
-
-
 let showTableBtn = document.getElementById("btnShowTable");
 let clearTimesBtn = document.getElementById("btnClearTimes");
 let errorMessageElement = document.getElementById("errorMessage");
 let exportPdfBtn = document.getElementById("btnExportPDf");
 let timeTable = document.getElementById("timeTable");
 let allUrlCheckBox = document.getElementById("allUrlCheckBox");
+
+function createLogoutButton() {
+  var btnLogout = document.createElement("button");
+  btnLogout.id = "btnLogout";
+  btnLogout.textContent = "Logout";
+
+  btnLogout.addEventListener("click", function () {
+    logout();
+  });
+
+  document.querySelector(".btnsection").appendChild(btnLogout);
+}
+
+function removeLogoutButton() {
+  var btnLogout = document.getElementById("btnLogout");
+  if (btnLogout) {
+    btnLogout.parentNode.removeChild(btnLogout);
+  }
+}
+
+function logout() {
+  chrome.storage.local.remove(
+    ["isLoggedIn", "userEmail", "authtoken"],
+    function () {
+      alert("Logged out successfully.");
+      removeLogoutButton();
+      showLoginButton();
+    }
+  );
+}
+
+function showLoginButton() {
+  var btnLogin = document.getElementById("btnLogin");
+  if (btnLogin) {
+    btnLogin.style.display = "block";
+  }
+}
+
+chrome.storage.local.get(["isLoggedIn"], function (data) {
+  if (data.isLoggedIn) {
+    createLogoutButton();
+    hideLoginButton();
+  }
+});
+
+function hideLoginButton() {
+  var btnLogin = document.getElementById("btnLogin");
+  if (btnLogin) {
+    btnLogin.style.display = "none";
+  }
+}
 
 function download(filename, text) {
   var element = document.createElement("a");
@@ -64,9 +111,10 @@ exportPdfBtn.onclick = function (element) {
 };
 
 showTableBtn.onclick = function (element) {
-    const ShowAllurl = allUrlCheckBox.checked;
+  const ShowAllurl = allUrlCheckBox.checked;
   chrome.storage.local.get("tabTimesObject", function (dataCont) {
     console.log(dataCont);
+
     let dataString = dataCont["tabTimesObject"];
     if (dataString == null) {
       return;
@@ -97,35 +145,29 @@ showTableBtn.onclick = function (element) {
         return 0;
       });
 
-
-
       entries.forEach(function (urlObject) {
         // console.log(urlObject);
-        let urlobj= urlObject["url"]
+        let urlobj = urlObject["url"];
 
         if (ShowAllurl && urlObject.hasOwnProperty("urlDetails")) {
-            let urlDetails = urlObject["urlDetails"];
-            console.log(urlDetails);
-          
-            const ul = document.createElement("ul");
-          
-            urlDetails.forEach((url) => {
-              const li = document.createElement("li"); 
-              li.textContent = url;
-              ul.appendChild(li); 
-            });
-          
-            let newRow = timeTable.insertRow(0);
-            let celHostname = newRow.insertCell(0);
-            celHostname.innerHTML = urlObject["url"]; 
-          
-           
-            let detailsCell = newRow.insertCell(1);
-            detailsCell.appendChild(ul);
-          
-           
-          }
-          else {
+          let urlDetails = urlObject["urlDetails"];
+          console.log(urlDetails);
+
+          const ul = document.createElement("ul");
+
+          urlDetails.forEach((url) => {
+            const li = document.createElement("li");
+            li.textContent = url;
+            ul.appendChild(li);
+          });
+
+          let newRow = timeTable.insertRow(0);
+          let celHostname = newRow.insertCell(0);
+          celHostname.innerHTML = urlObject["url"];
+
+          let detailsCell = newRow.insertCell(1);
+          detailsCell.appendChild(ul);
+        } else {
           let newRow = timeTable.insertRow(0);
           let celHostname = newRow.insertCell(0);
           let celTimeMinutes = newRow.insertCell(1);
@@ -158,15 +200,14 @@ showTableBtn.onclick = function (element) {
         }
       });
       if (!ShowAllurl) {
-    
-      let headerRow = timeTable.insertRow(0);
-      headerRow.insertCell(0).innerHTML = "Url";
-      headerRow.insertCell(1).innerHTML = "Minutes";
-      headerRow.insertCell(2).innerHTML = "Tracked Seconds";
-      headerRow.insertCell(3).innerHTML = "Last Date";
-      headerRow.insertCell(4).innerHTML = "Frist Date";
-    } 
-}catch (err) {
+        let headerRow = timeTable.insertRow(0);
+        headerRow.insertCell(0).innerHTML = "Url";
+        headerRow.insertCell(1).innerHTML = "Minutes";
+        headerRow.insertCell(2).innerHTML = "Tracked Seconds";
+        headerRow.insertCell(3).innerHTML = "Last Date";
+        headerRow.insertCell(4).innerHTML = "Frist Date";
+      }
+    } catch (err) {
       const message =
         "Loading the tabTimesObject went wrong: " + err.toString();
       console.error(message);
@@ -174,3 +215,16 @@ showTableBtn.onclick = function (element) {
     }
   });
 };
+setInterval(function () {
+  chrome.storage.local.get(["tabTimesObject", "userEmail"], function (data) {
+    const userEmail = data.userEmail;
+    const tabTimeObject = JSON.parse(data.tabTimesObject || "{}")
+    
+  
+    if (userEmail != null && tabTimeObject != null) {
+      SendData(userEmail, tabTimeObject);
+    }
+  });
+},   60000);
+
+
