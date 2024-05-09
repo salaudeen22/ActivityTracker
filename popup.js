@@ -215,16 +215,6 @@ showTableBtn.onclick = function (element) {
     }
   });
 };
-setInterval(function () {
-  chrome.storage.local.get(["tabTimesObject", "userEmail"], function (data) {
-    const userEmail = data.userEmail;
-    const tabTimeObject = JSON.parse(data.tabTimesObject || "{}")
-    
-  
-    if (userEmail != null && tabTimeObject != null) {
-      SendData(userEmail, tabTimeObject);
-    }
-  });
-},   60000);
+
 
 

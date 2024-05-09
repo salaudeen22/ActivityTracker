@@ -5,15 +5,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     var email = document.getElementById('email').value;
     var password = document.getElementById('password').value;
     
-    // // Perform authentication, for example, check against stored credentials
-    // if (username === 'admin' && password === 'password') {
-    //     // Store login status in local storage
-    //     chrome.storage.local.set({ 'isLoggedIn': true });
-    //     // Redirect to main extension page
-    //     chrome.tabs.create({ url: 'popup.html' });
-    // } else {
-    //     alert('Invalid username or password.');
-    // }
 
     const response = await fetch(`http://localhost:4000/api/loginuser`, {
       method: "POST",

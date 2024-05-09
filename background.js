@@ -3,6 +3,8 @@ const lastActiveTabKey = "lastActiveTab"; // {url:string, lastDateVal: number,fu
 
 chrome.runtime.onInstalled.addListener(function () {
   console.log("Extension installed or updated.");
+  const currentDate = new Date();
+  localStorage.setItem("installDate", currentDate.toISOString());
 
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
     chrome.declarativeContent.onPageChanged.addRules([
@@ -17,7 +19,51 @@ chrome.runtime.onInstalled.addListener(function () {
     ]);
   });
 });
+function isNewDay() {
 
+  const installDate = new Date(localStorage.getItem('installDate'));
+
+  const currentDate = new Date();
+  
+ 
+  return installDate.getFullYear() !== currentDate.getFullYear() ||
+         installDate.getMonth() !== currentDate.getMonth() ||
+         installDate.getDate() !== currentDate.getDate();
+}
+
+function resetDataOnNewDay() {
+  if (isNewDay()) {
+    
+      chrome.storage.local.set({ "tabTimesObject": {} }, function() {
+          console.log("Time spent on websites reset.");
+      });
+      
+    
+      chrome.storage.local.set({ "timeLimits": {} }, function() {
+          console.log("Time limits reset.");
+      });
+
+    
+      chrome.storage.local.set({ "restrictedWebsites": [] }, function() {
+          console.log("Restricted websites reset.");
+      });
+
+     
+      const currentDate = new Date();
+      localStorage.setItem('installDate', currentDate.toISOString());
+
+      console.log("Data reset for the new day.");
+  }
+}
+function handleTabUpdate(tabId, changeInfo, tab) {
+ 
+  resetDataOnNewDay();
+  
+  
+}
+
+
+chrome.tabs.onUpdated.addListener(handleTabUpdate);
 chrome.windows.onFocusChanged.addListener(function (windowId) {
   if (windowId === chrome.windows.WINDOW_ID_NONE) {
     // Reset the last active tab data if the window loses focus
@@ -39,22 +85,19 @@ function processTabChange(isWindowActive) {
     if (tabs.length > 0 && tabs[0] !== null) {
       let currentTab = tabs[0];
       let url = currentTab.url;
-     
+
       let title = currentTab.title;
       let hostName = url;
       try {
-   
-
-
         let urlObject = new URL(hostName);
 
         hostName = urlObject.hostname;
-        console.log("hostname"+hostName);
+        console.log("hostname" + hostName);
       } catch (e) {
         console.log(e);
         // console.error(`Could not construct URL from ${currentTab.url}, error: ${e}`);
       }
-      console.log("isWindowActive: " + isWindowActive+"url:"+url);
+      console.log("isWindowActive: " + isWindowActive + "url:" + url);
       console.log(tabs);
 
       chrome.storage.local.get(
@@ -134,9 +177,7 @@ function processTabChange(isWindowActive) {
           });
         }
       );
-    }
-    else
-    {
+    } else {
       console.log("no active tab found");
     }
   });
@@ -151,5 +192,38 @@ function onTabTrack(activeInfo) {
 // Add listener for tab activation event
 chrome.tabs.onActivated.addListener(onTabTrack);
 
+async function SendData(userEmail, dataString) {
+  try {
+      const response = await fetch('http://localhost:4000/api/sendData', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              email: userEmail,
+              screen_data: [dataString]
+          })
+      });
 
+      if (response.ok) {
+          const data = await response.json();
+          return data;
+      } else {
+          return response.statusText;
+      }
+  } catch (error) {
+      return error;
+  }
+}
 
+setInterval(function () {
+  chrome.storage.local.get(["tabTimesObject", "userEmail"], function (data) {
+    const userEmail = data.userEmail;
+    const tabTimeObject = JSON.parse(data.tabTimesObject || "{}")
+
+  
+    if (userEmail != null && tabTimeObject != null) {
+      SendData(userEmail, tabTimeObject);
+    }
+  });
+},   60000);
