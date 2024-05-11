@@ -95,7 +95,7 @@ clearTimesBtn.onclick = function (element) {
 exportPdfBtn.onclick = function (element) {
   let downloadUrl = "./";
   const titleText =
-    "Tab-time-trackings-" + encodeURIComponent(new Date().toISOString());
+    "AcivityTracker-" + encodeURIComponent(new Date().toISOString());
   let content = titleText + "\r\n\r\n";
   const paddings = [40, 10, 12, 35, 35];
   let rowCount = timeTable.rows.length;
@@ -202,7 +202,7 @@ showTableBtn.onclick = function (element) {
       if (!ShowAllurl) {
         let headerRow = timeTable.insertRow(0);
         headerRow.insertCell(0).innerHTML = "Url";
-        headerRow.insertCell(1).innerHTML = "Minutes";
+        headerRow.insertCell(1).innerHTML = "hours";
         headerRow.insertCell(2).innerHTML = "Tracked Seconds";
         headerRow.insertCell(3).innerHTML = "Last Date";
         headerRow.insertCell(4).innerHTML = "Frist Date";

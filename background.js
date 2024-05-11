@@ -3,8 +3,8 @@ const lastActiveTabKey = "lastActiveTab"; // {url:string, lastDateVal: number,fu
 
 chrome.runtime.onInstalled.addListener(function () {
   console.log("Extension installed or updated.");
-  const currentDate = new Date();
-  localStorage.setItem("installDate", currentDate.toISOString());
+  // const currentDate = new Date();
+  // localStorage.setItem("installDate", currentDate.toISOString());
 
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
     chrome.declarativeContent.onPageChanged.addRules([
@@ -19,51 +19,51 @@ chrome.runtime.onInstalled.addListener(function () {
     ]);
   });
 });
-function isNewDay() {
+// function isNewDay() {
 
-  const installDate = new Date(localStorage.getItem('installDate'));
+//   const installDate = new Date(localStorage.getItem('installDate'));
 
-  const currentDate = new Date();
+//   const currentDate = new Date();
   
  
-  return installDate.getFullYear() !== currentDate.getFullYear() ||
-         installDate.getMonth() !== currentDate.getMonth() ||
-         installDate.getDate() !== currentDate.getDate();
-}
+//   return installDate.getFullYear() !== currentDate.getFullYear() ||
+//          installDate.getMonth() !== currentDate.getMonth() ||
+//          installDate.getDate() !== currentDate.getDate();
+// }
 
-function resetDataOnNewDay() {
-  if (isNewDay()) {
+// function resetDataOnNewDay() {
+//   if (isNewDay()) {
     
-      chrome.storage.local.set({ "tabTimesObject": {} }, function() {
-          console.log("Time spent on websites reset.");
-      });
+//       chrome.storage.local.set({ "tabTimesObject": {} }, function() {
+//           console.log("Time spent on websites reset.");
+//       });
       
     
-      chrome.storage.local.set({ "timeLimits": {} }, function() {
-          console.log("Time limits reset.");
-      });
+//       chrome.storage.local.set({ "timeLimits": {} }, function() {
+//           console.log("Time limits reset.");
+//       });
 
     
-      chrome.storage.local.set({ "restrictedWebsites": [] }, function() {
-          console.log("Restricted websites reset.");
-      });
+//       chrome.storage.local.set({ "restrictedWebsites": [] }, function() {
+//           console.log("Restricted websites reset.");
+//       });
 
      
-      const currentDate = new Date();
-      localStorage.setItem('installDate', currentDate.toISOString());
+//       const currentDate = new Date();
+//       localStorage.setItem('installDate', currentDate.toISOString());
 
-      console.log("Data reset for the new day.");
-  }
-}
-function handleTabUpdate(tabId, changeInfo, tab) {
+//       console.log("Data reset for the new day.");
+//   }
+// }
+// function handleTabUpdate(tabId, changeInfo, tab) {
  
-  resetDataOnNewDay();
+//   resetDataOnNewDay();
   
   
-}
+// }
 
 
-chrome.tabs.onUpdated.addListener(handleTabUpdate);
+// chrome.tabs.onUpdated.addListener(handleTabUpdate);
 chrome.windows.onFocusChanged.addListener(function (windowId) {
   if (windowId === chrome.windows.WINDOW_ID_NONE) {
     // Reset the last active tab data if the window loses focus
@@ -216,14 +216,25 @@ async function SendData(userEmail, dataString) {
   }
 }
 
-setInterval(function () {
-  chrome.storage.local.get(["tabTimesObject", "userEmail"], function (data) {
-    const userEmail = data.userEmail;
-    const tabTimeObject = JSON.parse(data.tabTimesObject || "{}")
+const millisecondsInDay = 24 * 60 * 60 * 1000;
 
-  
+
+setInterval(function () {
+  chrome.storage.local.get(["tabTimesObject", "userEmail"], async function (data) {
+    const userEmail = data.userEmail;
+    const tabTimeObject = JSON.parse(data.tabTimesObject || "{}");
+
     if (userEmail != null && tabTimeObject != null) {
-      SendData(userEmail, tabTimeObject);
+      try {
+        await SendData(userEmail, tabTimeObject);
+      
+        chrome.storage.local.set({ "tabTimesObject": {} }, function () {
+          console.log("Tab times object cleared after sending data.");
+        });
+      } catch (error) {
+        console.error("Error sending data:", error);
+      }
     }
   });
-},   60000);
+}, millisecondsInDay);
+
