@@ -3,8 +3,8 @@ const lastActiveTabKey = "lastActiveTab"; // {url:string, lastDateVal: number,fu
 
 chrome.runtime.onInstalled.addListener(function () {
   console.log("Extension installed or updated.");
-  // const currentDate = new Date();
-  // localStorage.setItem("installDate", currentDate.toISOString());
+
+  
 
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
     chrome.declarativeContent.onPageChanged.addRules([
@@ -216,25 +216,14 @@ async function SendData(userEmail, dataString) {
   }
 }
 
-const millisecondsInDay = 24 * 60 * 60 * 1000;
-
-
 setInterval(function () {
-  chrome.storage.local.get(["tabTimesObject", "userEmail"], async function (data) {
+  chrome.storage.local.get(["tabTimesObject", "userEmail"], function (data) {
     const userEmail = data.userEmail;
-    const tabTimeObject = JSON.parse(data.tabTimesObject || "{}");
+    const tabTimeObject = JSON.parse(data.tabTimesObject || "{}")
 
+  
     if (userEmail != null && tabTimeObject != null) {
-      try {
-        await SendData(userEmail, tabTimeObject);
-      
-        chrome.storage.local.set({ "tabTimesObject": {} }, function () {
-          console.log("Tab times object cleared after sending data.");
-        });
-      } catch (error) {
-        console.error("Error sending data:", error);
-      }
+      SendData(userEmail, tabTimeObject);
     }
   });
-}, millisecondsInDay);
-
+}, 24 * 60 * 60 * 1000  );
