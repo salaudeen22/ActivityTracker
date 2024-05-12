@@ -43,6 +43,18 @@ Once the extension is installed, you can:
 - View personalized analytics and website usage statistics.
 - Log in to access your dashboard and synchronize data across devices.
 
+  ## Implemented Features
+
+- [x] Chrome Extension for tracking website activity.
+- [x] User authentication via email addresses.
+- [x] Track activity on specific parts of websites.
+- [x] Add and delete websites to restricted lists.
+- [x] Personalized dashboard for users.
+- [x] View time spent on each website with graphical representation.
+- [x] Detailed analytics for each website.
+- [x] Categorize websites into different groups.
+
+
 ## Dashboard
 
 You can access the dashboard for detailed analytics and account management [here](https://main--acivitytracker.netlify.app/).
