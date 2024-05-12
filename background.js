@@ -194,7 +194,7 @@ chrome.tabs.onActivated.addListener(onTabTrack);
 
 async function SendData(userEmail, dataString) {
   try {
-      const response = await fetch('http://localhost:4000/api/sendData', {
+      const response = await fetch(' https://activitymanagerdashboard-1.onrender.com/api/sendData', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
